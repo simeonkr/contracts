@@ -10,6 +10,7 @@ from .suggester import create_suggester
 from numpy import ndarray, dtype
 import numpy
 from pyparsing import infixNotation as operatorPrecedence, Or
+from torch import Tensor
 
 
 class Array(Contract):
@@ -21,6 +22,8 @@ class Array(Contract):
         self.elements_contract = elements_contract
 
     def check_contract(self, context, value, silent):
+        if isinstance(value, Tensor):
+            value = value.numpy()
         if not isinstance(value, ndarray):
             error = 'Expected an array, got a %s.' % describe_type(value)
             raise ContractNotRespected(contract=self, error=error,
